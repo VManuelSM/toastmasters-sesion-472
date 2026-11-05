@@ -1,0 +1,200 @@
+/* Ajustes de este deck sobre el tema del club. */
+
+/* El tema no da estilo a las listas: el reset de UnoCSS les quita la viñeta. */
+.slidev-layout ul {
+  list-style: disc;
+  margin-top: var(--space-4);
+  padding-left: 1.2em;
+}
+
+.slidev-layout ul li { margin: var(--space-1) 0; }
+
+.slidev-layout ul li::marker { color: var(--brand-secondary); }
+
+/* Retrato circular, igual que en el deck de Momentos de la Verdad: se usa en
+   las dos láminas de reconocimiento. */
+.tm-retrato {
+  width: 13rem;
+  height: 13rem;
+  margin: var(--space-5) auto 0;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 28%;
+  border: 4px solid var(--brand-accent);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 18%);
+}
+
+/* Dos o tres grafos de mentoría en una lámina. `align-items: flex-start`
+   porque los grafos tienen distinta altura según cuántos discípulos traen, y
+   centrados verticalmente los mentores dejarían de alinearse entre sí. */
+.fila-grafos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--space-16);
+  margin-top: var(--space-2);
+}
+
+/* El grafo se centra solo con `margin: 0 auto`, y dentro de un contenedor
+   flex ese auto se come el espacio libre y separa los grafos hasta los
+   bordes. En fila, el centrado lo hace el contenedor. */
+.fila-grafos > .grafo { margin: 0; }
+
+/* Las dos parejas de la toma de protesta, lado a lado. El separador vertical
+   hace el trabajo que antes hacían dos láminas: sin él, las cuatro caras se
+   leen como un solo grupo y se pierde quién acompaña a quién. */
+.fila-parejas {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--space-6);
+  margin-top: var(--space-5);
+}
+
+.fila-parejas > * + * {
+  padding-left: var(--space-6);
+  border-left: 1px solid var(--border-default);
+}
+
+/* Lámina del concurso: requisitos a la izquierda, QR a la derecha. El QR lleva
+   ancho fijo —el flex lo comprimiría hasta volverlo inescaneable— y los
+   requisitos se quedan con lo que sobre. */
+.concurso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+}
+
+.concurso__datos { flex: 1; min-width: 0; }
+
+.concurso__qr { flex: 0 0 auto; }
+
+/* Sobre el gradiente de los cierres, listas y negritas en blanco. */
+.tm-cierre li,
+.tm-cierre strong { color: var(--text-inverse); }
+
+.tm-cierre li { opacity: 0.9; }
+
+.tm-cierre ul li::marker { color: var(--brand-accent); }
+
+/* ===========================================================================
+   Movimiento
+   ===========================================================================
+
+   Mismo mecanismo que en el deck del 8 de octubre: Slidev deja montadas todas
+   las láminas y oculta con `display: none` las que no se ven, así que una
+   animación CSS no corre sobre una lámina oculta y se reinicia cuando pasa a
+   `block`. Basta declararla sobre los hijos de `.slidev-page` para que entre
+   al llegar a la lámina, y otra vez si se regresa.
+
+   Sin JavaScript y sin `v-click`, que metería clics nuevos a un guión ya
+   cronometrado. Nada pasa de 900 ms: en proyector, lo lento se lee como lag.
+
+   `tm-asoma` y `tm-sube` se declaran aquí, en CSS global, porque los
+   componentes del deck —`Grafo.vue`, `Pareja.vue`— las usan desde sus estilos
+   `scoped`, y una `@keyframes` definida dentro de un bloque scoped Vue la
+   renombra y deja de ser reutilizable.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Barrido lateral que descubre el texto de un solo gesto. */
+  @keyframes tm-barrido {
+    from { clip-path: inset(0 100% 0 0); letter-spacing: 0.05em; opacity: 0.4; }
+    to   { clip-path: inset(0 0 0 0);    letter-spacing: normal;  opacity: 1; }
+  }
+
+  /* Entrada estándar: sube, enfoca y aparece. */
+  @keyframes tm-sube {
+    from { opacity: 0; transform: translateY(14px); filter: blur(5px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+  }
+
+  /* Tarjetas, retratos y nodos del grafo: igual que `tm-sube` con un punto de
+     escala, que les da peso de objeto en vez de texto. */
+  @keyframes tm-asoma {
+    from { opacity: 0; transform: translateY(18px) scale(0.965); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  /* El aro dorado se cierra alrededor de la foto del reconocimiento. */
+  @keyframes tm-aro {
+    from { opacity: 0; transform: scale(1.07); box-shadow: 0 0 0 14px rgb(242 223 116 / 0%), 0 10px 30px rgb(0 0 0 / 0%); }
+    60%  { opacity: 1; }
+    to   { opacity: 1; transform: scale(1);    box-shadow: 0 0 0 0   rgb(242 223 116 / 35%), 0 10px 30px rgb(0 0 0 / 18%); }
+  }
+
+  /* Deriva lentísima del gradiente en portada y cierres. Es el único efecto
+     que no termina: sostiene la lámina mientras alguien habla encima. */
+  @keyframes tm-deriva {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+  }
+
+  .slidev-page .tm-contenido__titulo {
+    animation: tm-barrido 700ms var(--transition-easing-out) both;
+  }
+
+  .slidev-page .tm-portada h1,
+  .slidev-page .tm-cierre h1 {
+    animation: tm-barrido 800ms var(--transition-easing-out) both;
+  }
+
+  .slidev-page .tm-portada__club,
+  .slidev-page .tm-portada p,
+  .slidev-page .tm-portada__pie,
+  .slidev-page .tm-cierre p,
+  .slidev-page .tm-reconocimiento__galardon,
+  .slidev-page .tm-reconocimiento__quien,
+  .slidev-page .tm-reconocimiento__motivo,
+  .slidev-page .slidev-layout > blockquote,
+  .slidev-page .slidev-layout > p,
+  .slidev-page .slidev-layout ul li {
+    animation: tm-sube 620ms var(--transition-easing-out) both;
+  }
+
+  .slidev-page .tm-tarjeta {
+    animation: tm-asoma 640ms var(--transition-easing-out) both;
+  }
+
+  .slidev-page .tm-retrato {
+    animation: tm-aro 760ms var(--transition-easing-out) both;
+  }
+
+  /* Escalonado. El orden de lectura manda: primero el título, luego el cuerpo,
+     y las tarjetas entran en cascada. */
+  .slidev-page .slidev-layout > p,
+  .slidev-page .slidev-layout > blockquote { animation-delay: 160ms; }
+
+  .slidev-page .tm-tarjeta { animation-delay: calc(90ms * var(--i, 0) + 140ms); }
+
+  .slidev-page .tm-tarjetas > *:nth-child(1),
+  .slidev-page .grid > *:nth-child(1) { --i: 0; }
+  .slidev-page .tm-tarjetas > *:nth-child(2),
+  .slidev-page .grid > *:nth-child(2) { --i: 1; }
+  .slidev-page .tm-tarjetas > *:nth-child(3),
+  .slidev-page .grid > *:nth-child(3) { --i: 2; }
+  .slidev-page .grid > *:nth-child(4) { --i: 3; }
+
+  .slidev-page .slidev-layout ul li:nth-child(1) { animation-delay: 220ms; }
+  .slidev-page .slidev-layout ul li:nth-child(2) { animation-delay: 300ms; }
+  .slidev-page .slidev-layout ul li:nth-child(3) { animation-delay: 380ms; }
+  .slidev-page .slidev-layout ul li:nth-child(4) { animation-delay: 460ms; }
+
+  .slidev-page .tm-reconocimiento__galardon { animation-delay: 60ms; }
+  .slidev-page .tm-reconocimiento__quien    { animation-delay: 200ms; }
+  .slidev-page .tm-reconocimiento__motivo   { animation-delay: 320ms; }
+  .slidev-page .tm-retrato                  { animation-delay: 420ms; }
+
+  /* En la rejilla de ocho grafos del mapa, el escalonado va por cluster: si
+     cada nodo entrara con su propio retardo, la lámina tardaría tres segundos
+     en armarse. */
+  .slidev-page .mapa .grafo__nodo { animation-delay: 160ms; }
+
+  /* La deriva del gradiente. El tamaño 200% es lo que le da recorrido. */
+  .slidev-page .tm-portada,
+  .slidev-page .tm-cierre {
+    background-size: 200% 200%;
+    animation: tm-deriva 28s var(--transition-easing-in-out) infinite alternate;
+  }
+}
