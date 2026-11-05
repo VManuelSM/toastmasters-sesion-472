@@ -5,8 +5,9 @@
   "description": "Sesión 472 — Concurso, programa de mentoría, reconocimiento de octubre y toma de protesta (Toastmasters Pachuca)",
   "scripts": {
     "dev": "slidev --open",
-    "build": "slidev build",
-    "export": "slidev export"
+    "build": "slidev build --base /toastmasters-sesion-472/ --out dist && touch dist/.nojekyll",
+    "export": "slidev export",
+    "deploy": "npm run build && node scripts/publicar.mjs"
   },
   "dependencies": {
     "@slidev/cli": "^53.0.0",

@@ -4,11 +4,28 @@ Deck de Slidev para la sesión del **jueves 5 de noviembre de 2026** del club To
 
 Usa [`slidev-theme-toastmasters-pachuca`](../slidev-theme-toastmasters-pachuca), igual que el deck de Momentos de la Verdad del 8 de octubre.
 
+**Publicado en <https://vmanuelsm.github.io/toastmasters-sesion-472/>.**
+
 ```bash
 npm install
 npm run dev        # vista del presentador en /presenter — las notas son el guión
 npm run export     # PDF
+npm run deploy     # construye y publica en GitHub Pages
 ```
+
+> `npm install` necesita el tema, que vive **solo en local** (`file:../slidev-theme-toastmasters-pachuca`) y no está publicado en GitHub. Quien clone este repo no puede instalarlo hasta que el tema tenga su propio repositorio.
+
+## Publicar
+
+Pages sirve la rama `gh-pages`, que trae el sitio ya construido. No hay workflow de CI **porque el tema es una dependencia local**: un runner de GitHub no podría resolverlo. El build se hace aquí y se empuja:
+
+```bash
+npm run deploy
+```
+
+El `--base` tiene que coincidir con el nombre del repositorio o los retratos y los *assets* salen en 404. `dist/.nojekyll` es lo que evita que Pages se coma la carpeta `assets`.
+
+> **El sitio es público y las notas del presentador viajan dentro del bundle.** La ruta `/presenter/` no se construye, así que no hay forma de leerlas desde la interfaz, pero el texto está en `assets/index-*.js` y cualquiera que abra ese archivo lo ve: disponibilidad declarada por socio, el tope del concurso sin cerrar y las advertencias internas. Si eso deja de ser aceptable, hay que quitar los comentarios `<!-- -->` del `slides.md` antes de construir, o pasar el repositorio a privado.
 
 ## El mapa de mentoría
 
