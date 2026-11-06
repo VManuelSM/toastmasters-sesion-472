@@ -1,1 +1,0 @@
-import{B as e,L as t,y as n}from"./modules/shiki-B3iYF0Pt.js";import{tt as r}from"./index-CrPj9dsD.js";var i={class:`tm-tarjetas`},a={__name:`Tarjetas`,setup(a){let{$slidev:o,$nav:s,$clicksContext:c,$clicks:l,$page:u,$renderContext:d,$frontmatter:f}=r();return(r,a)=>(t(),n(`div`,i,[e(r.$slots,`default`)]))}};export{a as t};
