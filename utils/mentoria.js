@@ -60,11 +60,26 @@ export const CLUSTERS = [
   { mentor: 'edgar', discipulos: ['carlosS'] },
 ]
 
+/**
+ * Antepone el `base` del sitio a la ruta de la foto.
+ *
+ * Las fotos de los grafos llegan a `<img>` como string de datos, no como
+ * literal en la plantilla, así que **Vite no las reescribe en el build**: en
+ * GitHub Pages, servido bajo `/toastmasters-sesion-472/`, `/victor-santos.jpg`
+ * se iba a la raíz del dominio y las veinte caras salían rotas. En `npm run
+ * dev` no se nota, porque ahí el base es `/`.
+ */
+function conBase(foto) {
+  if (!foto) return null
+  const base = import.meta.env?.BASE_URL ?? '/'
+  return `${base.replace(/\/$/, '')}/${foto.replace(/^\//, '')}`
+}
+
 /** Resuelve una clave o un cluster a objetos listos para `<Grafo>`. */
 export function socio(clave) {
   const s = SOCIOS[clave]
   if (!s) throw new Error(`Socio desconocido en el mapa de mentoría: ${clave}`)
-  return s
+  return { ...s, foto: conBase(s.foto) }
 }
 
 export function cluster(claveMentor) {
